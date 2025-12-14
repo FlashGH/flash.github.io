@@ -207,7 +207,17 @@
 <script>
     // ▼ 링크는 그대로 두세요 ▼
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1iiehoCN1p4v2gu1nChpfb5VznGhjwdgEFUVs1ohHp5Q/export?format=csv";
-    
+
+    // ▼▼▼ [중요] 스크린샷 보고 열 번호를 다시 맞췄습니다 (확인 필요) ▼▼▼
+    // 엑셀 A열=0, B열=1, C열=2 ... H열=7 ... 식입니다.
+    const COL_MONTH = 1;   // 월 (B열)
+    const COL_DAY = 2;     // 일 (C열)
+    const COL_RESULT = 7;  // 승패 (H열 - 여기에 값이 없으면 아직 안 한 경기)
+    const COL_SCORE_NA = 8; // 나형동 점수 (I열)
+    const COL_SCORE_SHIN = 9; // 신선민 점수 (J열)
+    const COL_PLACE = 10;   // 비고/구장 (K열)
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
     async function loadSpreadsheet() {
       const tableHead = document.getElementById("tableHead");
       const tableBody = document.getElementById("tableBody");
@@ -215,63 +225,31 @@
       const recentList = document.getElementById("recentMatchList");
 
       try {
-        console.log("데이터 요청 중...");
-        const response = await fetch(SHEET_CSV_URL + "&t=" + new Date().getTime()); // 캐시 방지용 시간 추가
+        const response = await fetch(SHEET_CSV_URL + "&t=" + Date.now());
         const data = await response.text();
 
-        if (data.trim().startsWith("<!")) {
-          throw new Error("권한 오류: 스프레드시트 '공유' 설정이나 '웹에 게시'를 확인해주세요.");
-        }
+        if (data.trim().startsWith("<!")) throw new Error("스프레드시트 공유 설정을 확인해주세요.");
 
-        // ★ [핵심 수정] 쉼표가 텍스트 안에 있어도 안 깨지게 자르는 함수
+        // CSV 파싱 함수
         const parseCSV = (text) => {
             const rows = [];
             let currentRow = [];
             let currentCell = "";
             let inQuote = false;
-
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
-                const nextChar = text[i+1];
-
-                // 따옴표 처리 ("데이터" -> 데이터)
-                if (char === '"') {
-                    if (inQuote && nextChar === '"') { // 이스케이프 된 따옴표 ("")
-                        currentCell += '"';
-                        i++;
-                    } else {
-                        inQuote = !inQuote; // 따옴표 시작/종료
-                    }
-                } 
-                // 쉼표 처리 (따옴표 안이 아닐 때만 칸 나누기)
-                else if (char === ',' && !inQuote) {
-                    currentRow.push(currentCell);
-                    currentCell = "";
-                } 
-                // 줄바꿈 처리 (따옴표 안이 아닐 때만 줄 바꾸기)
+                if (char === '"') { inQuote = !inQuote; } 
+                else if (char === ',' && !inQuote) { currentRow.push(currentCell); currentCell = ""; } 
                 else if ((char === '\r' || char === '\n') && !inQuote) {
-                    if (char === '\r' && nextChar === '\n') i++; // CRLF 처리
-                    if (currentRow.length > 0 || currentCell) {
-                        currentRow.push(currentCell);
-                        rows.push(currentRow);
-                        currentRow = [];
-                        currentCell = "";
-                    }
-                } 
-                // 일반 글자
-                else {
-                    currentCell += char;
-                }
+                    if (char === '\r' && text[i+1] === '\n') i++;
+                    if (currentRow.length || currentCell) { currentRow.push(currentCell); rows.push(currentRow); currentRow = []; currentCell = ""; }
+                } else { currentCell += char; }
             }
-            if (currentRow.length > 0 || currentCell) {
-                currentRow.push(currentCell);
-                rows.push(currentRow);
-            }
+            if (currentRow.length || currentCell) { currentRow.push(currentCell); rows.push(currentRow); }
             return rows;
         };
 
         const rows = parseCSV(data);
-        console.log("불러온 데이터 개수:", rows.length);
 
         // 초기화
         tableHead.innerHTML = "";
@@ -280,74 +258,86 @@
 
         if (rows.length === 0) return;
 
-        // 1. 헤더 만들기
+        // 1. 헤더 생성
         rows[0].forEach(header => {
-          const th = document.createElement("th");
-          th.textContent = header.trim();
-          tableHead.appendChild(th);
+            const th = document.createElement("th");
+            th.textContent = header.trim();
+            tableHead.appendChild(th);
         });
 
-        // 2. 전체 테이블 채우기
-        const cleanRows = rows.slice(1);
+        // 2. 전체 데이터 채우기 (여기는 미래 데이터도 다 보여줍니다)
+        const cleanRows = rows.slice(1).filter(r => r.length > 1);
         cleanRows.forEach(rowData => {
-          if (rowData.length < 2) return; // 빈 줄 무시
-          const tr = document.createElement("tr");
-          rowData.forEach(cell => {
-            const td = document.createElement("td");
-            td.textContent = cell.trim();
-            tr.appendChild(td);
-          });
-          tableBody.appendChild(tr);
+            const tr = document.createElement("tr");
+            rowData.forEach(cell => {
+                const td = document.createElement("td");
+                td.textContent = cell.trim();
+                tr.appendChild(td);
+            });
+            tableBody.appendChild(tr);
         });
 
-        // 3. 최근 전적 카드 생성 (최신 3개)
-        const recentMatches = [...cleanRows].reverse().slice(0, 3);
-
-        if (recentMatches.length === 0) {
-          recentList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">기록된 전적이 없습니다.</div>';
-        } else {
-          recentMatches.forEach(row => {
-            // [0:날짜, 1:구분, 2:내용, 3:결과, 4:비고]
-            const date = row[0] || "-";
-            const content = row[2] || "";
-            const result = row[3] || "-";
-            const place = row[4] || "Unknown";
-
-            let scoreText = content; 
-            const scoreMatch = content.match(/\d+\s*[:대]\s*\d+/);
-            if (scoreMatch) scoreText = scoreMatch[0];
-
-            const isNaWin = result.includes("승");
-            const naClass = isNaWin ? "team-lg winner" : "team-lg loser";
-            const shinClass = !isNaWin ? "team-samsung winner" : "team-samsung loser";
-
-            const matchHtml = `
-              <div class="vs-match-row">
-                <div class="team-box">
-                  <div class="team-name ${naClass}">나형동 (LG)</div>
-                </div>
-                <div class="score-box">
-                  <div class="match-date-badge">${date}</div>
-                  <div class="score-text">${scoreText}</div>
-                  <div class="match-place">📍 ${place}</div>
-                </div>
-                <div class="team-box">
-                  <div class="team-name ${shinClass}">신선민 (Samsung)</div>
-                </div>
-              </div>
-            `;
-            recentList.innerHTML += matchHtml;
-          });
-        }
+        // 3. ★ [핵심] 최근 전적 카드 생성 (필터링 로직 추가) ★
         
+        // (1) 결과(승패) 칸이 비어있지 않은 게임만 골라냅니다. (이게 핵심!)
+        const playedMatches = cleanRows.filter(row => {
+            const result = row[COL_RESULT];
+            return result && result.trim() !== "" && result.trim() !== "-";
+        });
+
+        // (2) 그 중에서 최신순으로 3개 자르기
+        const recentMatches = [...playedMatches].reverse().slice(0, 3);
+        
+        if (recentMatches.length === 0) {
+            recentList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">진행된 경기가 없습니다.</div>';
+        } else {
+            recentMatches.forEach(row => {
+                // 데이터 가져오기
+                const month = row[COL_MONTH] || "?";
+                const day = row[COL_DAY] || "?";
+                const dateText = `${month}월 ${day}일`;
+                
+                const result = row[COL_RESULT] || "-";
+                const scoreNa = row[COL_SCORE_NA] || "0";
+                const scoreShin = row[COL_SCORE_SHIN] || "0";
+                const place = row[COL_PLACE] || "Unknown";
+
+                // 점수 조합 (5 : 3)
+                const scoreText = `${scoreNa} : ${scoreShin}`;
+
+                // 승패 로직
+                // 엑셀에 '승'이라는 글자가 있거나, 나형동 점수가 더 높으면 승리 처리
+                const isWin = result.includes("승") || (parseInt(scoreNa) > parseInt(scoreShin));
+                
+                // 스타일 적용
+                const naClass = isWin ? "team-lg winner" : "team-lg loser";
+                const shinClass = !isWin ? "team-samsung winner" : "team-samsung loser";
+
+                // HTML 주입
+                recentList.innerHTML += `
+                    <div class="vs-match-row">
+                        <div class="team-box">
+                            <div class="team-name ${naClass}">나형동 (LG)</div>
+                        </div>
+                        <div class="score-box">
+                            <div class="match-date-badge">${dateText}</div>
+                            <div class="score-text">${scoreText}</div>
+                            <div class="match-place">📍 ${place}</div>
+                        </div>
+                        <div class="team-box">
+                            <div class="team-name ${shinClass}">신선민 (Samsung)</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
         loading.style.display = 'none';
 
-      } catch (error) {
-        console.error("로딩 실패:", error);
-        loading.innerHTML = `<div style="color:#ff5e62">⚠️ ${error.message}</div>`;
+      } catch (e) {
+        console.error(e);
+        loading.innerHTML = "오류: " + e.message;
       }
     }
-
     loadSpreadsheet();
   </script>
 </body>
