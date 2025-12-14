@@ -10,7 +10,7 @@
   <style>
     /* 마구마구 페이지 전용 스타일 */
     .magu-hero {
-      background: radial-gradient(circle at center, rgba(195, 0, 47, 0.15), transparent 70%); /* LG Red 느낌 살짝 */
+      background: radial-gradient(circle at center, rgba(195, 0, 47, 0.15), transparent 70%); /* LG Red 느낌 */
       text-align: center;
       padding: 60px 0;
     }
@@ -26,17 +26,17 @@
     }
     .back-btn:hover { color: #fff; text-decoration: underline; }
 
-    /* 레이아웃 그리드 수정 */
+    /* 레이아웃 그리드 */
     .about-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr; /* 기본 2열 */
+      grid-template-columns: 1fr 1fr;
       gap: 24px;
       margin-bottom: 40px;
     }
     
-    /* 두 칸을 차지하는 풀 사이즈 카드 */
+    /* 두 칸 차지 카드 */
     .full-width-card {
-      grid-column: 1 / -1; /* 처음부터 끝까지 차지 */
+      grid-column: 1 / -1;
       background: rgba(255,255,255,0.02);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -59,18 +59,18 @@
 
     .team-box { text-align: center; width: 30%; }
     .team-name { font-size: 16px; margin-bottom: 4px; }
-    .team-lg { color: #ff4d4d; } /* LG Red (다크모드용 밝은 버전) */
-    .team-samsung { color: #4dabf7; } /* Samsung Blue (다크모드용 밝은 버전) */
+    .team-lg { color: #ff4d4d; } 
+    .team-samsung { color: #4dabf7; }
     
     .score-box { text-align: center; width: 40%; }
     .score-text { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: 2px; }
     .match-place { font-size: 12px; color: var(--muted); margin-top: 4px; }
     .match-date-badge { 
-        font-size: 10px; padding: 2px 6px; border-radius: 4px; 
-        background: rgba(255,255,255,0.1); color: #aaa; display:inline-block; margin-bottom:5px;
+      font-size: 10px; padding: 2px 6px; border-radius: 4px; 
+      background: rgba(255,255,255,0.1); color: #aaa; display:inline-block; margin-bottom:5px;
     }
 
-    /* 승리자 강조 스타일 */
+    /* 승리자 강조 */
     .winner { font-weight: 900; opacity: 1; transform: scale(1.05); display:inline-block;}
     .loser { font-weight: 400; opacity: 0.5; }
 
@@ -143,20 +143,20 @@
           <div class="card">
             <h3 style="color: #ff5e62;">참여 연구원</h3>
             <div class="participants" style="margin-top:10px;">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                    <img src="images/team/nahyungdong.jpg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'">
-                    <div>
-                        <div style="font-weight:700; font-size:14px; color:#ff4d4d;">나형동 (LG)</div>
-                        <div style="font-size:12px; color:var(--muted);">구단주 & 수석연구관</div>
-                    </div>
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <img src="images/team/nahyungdong.jpg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'">
+                <div>
+                  <div style="font-weight:700; font-size:14px; color:#ff4d4d;">나형동 (LG)</div>
+                  <div style="font-size:12px; color:var(--muted);">구단주 & 수석연구관</div>
                 </div>
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <img src="images/team/shinseonmin.jpg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'">
-                    <div>
-                        <div style="font-weight:700; font-size:14px; color:#4dabf7;">신선민 (Samsung)</div>
-                        <div style="font-size:12px; color:var(--muted);">전략분석관</div>
-                    </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <img src="images/team/shinseonmin.jpg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'">
+                <div>
+                  <div style="font-weight:700; font-size:14px; color:#4dabf7;">신선민 (Samsung)</div>
+                  <div style="font-size:12px; color:var(--muted);">전략분석관</div>
                 </div>
+              </div>
             </div>
           </div>
 
@@ -167,7 +167,7 @@
             </div>
             
             <div id="recentMatchList">
-                <div style="text-align:center; padding:20px; color:var(--muted);">데이터 로딩중...</div>
+              <div style="text-align:center; padding:20px; color:var(--muted);">데이터 로딩중...</div>
             </div>
           </div>
 
@@ -192,7 +192,7 @@
           </div>
         </div>
         <div style="margin-top: 20px; text-align: right; font-size: 12px; color: var(--faint);">
-            * Data Source: Google Sheets
+          * Data Source: Google Sheets
         </div>
       </section>
     </div>
@@ -205,7 +205,7 @@
   </footer>
 
   <script>
-    // 구글 시트 CSV 링크
+    // ▼▼▼ 변환된 CSV 다운로드 링크입니다 ▼▼▼
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1iiehoCN1p4v2gu1nChpfb5VznGhjwdgEFUVs1ohHp5Q/export?format=csv";
     
     async function loadSpreadsheet() {
@@ -216,9 +216,13 @@
 
       try {
         const response = await fetch(SHEET_CSV_URL);
-        if (!response.ok) throw new Error("권한 오류");
-
         const data = await response.text();
+
+        // 🚨 HTML이 반환되면 권한 문제임
+        if (data.trim().startsWith("<!")) {
+          throw new Error("스프레드시트가 비공개 상태입니다. 공유 설정에서 '링크가 있는 모든 사용자'로 바꿔주세요.");
+        }
+
         const rows = data.split("\n").map(row => row.split(","));
 
         // 초기화
@@ -228,85 +232,76 @@
 
         if (rows.length === 0) return;
 
-        // 1. 테이블 헤더 생성
+        // 1. 헤더 만들기
         rows[0].forEach(header => {
-            const th = document.createElement("th");
-            th.textContent = header.replace(/^"|"$/g, '').trim();
-            tableHead.appendChild(th);
+          const th = document.createElement("th");
+          th.textContent = header.replace(/^"|"$/g, '').trim();
+          tableHead.appendChild(th);
         });
 
         // 데이터 정제
         const cleanRows = rows.slice(1).filter(r => r.length > 1 && r[0] !== "");
 
-        // 2. 전체 테이블 데이터 채우기
+        // 2. 전체 테이블 채우기
         cleanRows.forEach(rowData => {
-            const tr = document.createElement("tr");
-            rowData.forEach(cell => {
-                const td = document.createElement("td");
-                td.textContent = cell.replace(/^"|"$/g, '').trim();
-                tr.appendChild(td);
-            });
-            tableBody.appendChild(tr);
+          const tr = document.createElement("tr");
+          rowData.forEach(cell => {
+            const td = document.createElement("td");
+            td.textContent = cell.replace(/^"|"$/g, '').trim();
+            tr.appendChild(td);
+          });
+          tableBody.appendChild(tr);
         });
 
-        // 3. ★ [핵심] 최근 전적 카드 생성 로직 ★
-        // 최신순으로 3개만 가져옴
+        // 3. 최근 전적 카드 생성
         const recentMatches = [...cleanRows].reverse().slice(0, 3);
 
         if (recentMatches.length === 0) {
-            recentList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">기록된 전적이 없습니다.</div>';
+          recentList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">기록된 전적이 없습니다.</div>';
         } else {
-            recentMatches.forEach(row => {
-                // CSV 컬럼 순서 가정: [0:날짜, 1:구분, 2:내용(점수), 3:결과(승패), 4:비고(구장)]
-                const date = row[0]?.replace(/^"|"$/g, '') || "-";
-                const content = row[2]?.replace(/^"|"$/g, '') || "";
-                const result = row[3]?.replace(/^"|"$/g, '') || "-";
-                const place = row[4]?.replace(/^"|"$/g, '') || "Unknown Stadium";
+          recentMatches.forEach(row => {
+            // CSV 컬럼 순서 가정: [0:날짜, 1:구분, 2:내용(점수), 3:결과(승패), 4:비고(구장)]
+            const date = row[0]?.replace(/^"|"$/g, '') || "-";
+            const content = row[2]?.replace(/^"|"$/g, '') || "";
+            const result = row[3]?.replace(/^"|"$/g, '') || "-";
+            const place = row[4]?.replace(/^"|"$/g, '') || "Unknown Stadium";
 
-                // 점수 추출 (내용에 '5:3' 같은 패턴이 있으면 그걸 점수로 씀)
-                // 만약 점수 패턴이 없으면 그냥 내용 전체를 보여줌
-                let scoreText = content; 
-                // 간단한 점수 패턴 찾기 (숫자:숫자)
-                const scoreMatch = content.match(/\d+\s*:\s*\d+/);
-                if (scoreMatch) {
-                    scoreText = scoreMatch[0];
-                }
+            // 점수 추출 (예: '5:3' 또는 '5대3')
+            let scoreText = content; 
+            const scoreMatch = content.match(/\d+\s*[:대]\s*\d+/);
+            if (scoreMatch) scoreText = scoreMatch[0];
 
-                // 승패 로직 (나형동 기준)
-                // 결과에 '승'이 있으면 나형동 승리
-                const isNaWin = result.includes("승");
-                
-                // 스타일 결정
-                // 승리자: 굵게 + 불투명도 100%
-                // 패배자: 얇게 + 불투명도 50%
-                const naClass = isNaWin ? "team-lg winner" : "team-lg loser";
-                const shinClass = !isNaWin ? "team-samsung winner" : "team-samsung loser";
+            // 승패 로직 (나형동 기준)
+            const isNaWin = result.includes("승");
+            
+            // 승자는 굵고 진하게, 패자는 흐리게
+            const naClass = isNaWin ? "team-lg winner" : "team-lg loser";
+            const shinClass = !isNaWin ? "team-samsung winner" : "team-samsung loser";
 
-                // HTML 생성
-                const matchHtml = `
-                    <div class="vs-match-row">
-                        <div class="team-box">
-                            <div class="team-name ${naClass}">나형동 (LG)</div>
-                        </div>
-                        <div class="score-box">
-                            <div class="match-date-badge">${date}</div>
-                            <div class="score-text">${scoreText}</div>
-                            <div class="match-place">📍 ${place}</div>
-                        </div>
-                        <div class="team-box">
-                            <div class="team-name ${shinClass}">신선민 (Samsung)</div>
-                        </div>
-                    </div>
-                `;
-                recentList.innerHTML += matchHtml;
-            });
+            const matchHtml = `
+              <div class="vs-match-row">
+                <div class="team-box">
+                  <div class="team-name ${naClass}">나형동 (LG)</div>
+                </div>
+                <div class="score-box">
+                  <div class="match-date-badge">${date}</div>
+                  <div class="score-text">${scoreText}</div>
+                  <div class="match-place">📍 ${place}</div>
+                </div>
+                <div class="team-box">
+                  <div class="team-name ${shinClass}">신선민 (Samsung)</div>
+                </div>
+              </div>
+            `;
+            recentList.innerHTML += matchHtml;
+          });
         }
         
         loading.style.display = 'none';
 
       } catch (error) {
         console.error("로딩 실패:", error);
-        loading.textContent = "데이터 로드 실패";
+        loading.innerHTML = `<div style="color:#ff5e62">${error.message}</div>`;
       }
     }
 
