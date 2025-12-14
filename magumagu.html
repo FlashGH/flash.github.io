@@ -204,8 +204,8 @@
     </div>
   </footer>
 
-  <script>
-    // ▼▼▼ 변환된 CSV 다운로드 링크입니다 ▼▼▼
+<script>
+    // ▼ 링크는 그대로 두세요 ▼
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1iiehoCN1p4v2gu1nChpfb5VznGhjwdgEFUVs1ohHp5Q/export?format=csv";
     
     async function loadSpreadsheet() {
@@ -215,15 +215,63 @@
       const recentList = document.getElementById("recentMatchList");
 
       try {
-        const response = await fetch(SHEET_CSV_URL);
+        console.log("데이터 요청 중...");
+        const response = await fetch(SHEET_CSV_URL + "&t=" + new Date().getTime()); // 캐시 방지용 시간 추가
         const data = await response.text();
 
-        // 🚨 HTML이 반환되면 권한 문제임
         if (data.trim().startsWith("<!")) {
-          throw new Error("스프레드시트가 비공개 상태입니다. 공유 설정에서 '링크가 있는 모든 사용자'로 바꿔주세요.");
+          throw new Error("권한 오류: 스프레드시트 '공유' 설정이나 '웹에 게시'를 확인해주세요.");
         }
 
-        const rows = data.split("\n").map(row => row.split(","));
+        // ★ [핵심 수정] 쉼표가 텍스트 안에 있어도 안 깨지게 자르는 함수
+        const parseCSV = (text) => {
+            const rows = [];
+            let currentRow = [];
+            let currentCell = "";
+            let inQuote = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const nextChar = text[i+1];
+
+                // 따옴표 처리 ("데이터" -> 데이터)
+                if (char === '"') {
+                    if (inQuote && nextChar === '"') { // 이스케이프 된 따옴표 ("")
+                        currentCell += '"';
+                        i++;
+                    } else {
+                        inQuote = !inQuote; // 따옴표 시작/종료
+                    }
+                } 
+                // 쉼표 처리 (따옴표 안이 아닐 때만 칸 나누기)
+                else if (char === ',' && !inQuote) {
+                    currentRow.push(currentCell);
+                    currentCell = "";
+                } 
+                // 줄바꿈 처리 (따옴표 안이 아닐 때만 줄 바꾸기)
+                else if ((char === '\r' || char === '\n') && !inQuote) {
+                    if (char === '\r' && nextChar === '\n') i++; // CRLF 처리
+                    if (currentRow.length > 0 || currentCell) {
+                        currentRow.push(currentCell);
+                        rows.push(currentRow);
+                        currentRow = [];
+                        currentCell = "";
+                    }
+                } 
+                // 일반 글자
+                else {
+                    currentCell += char;
+                }
+            }
+            if (currentRow.length > 0 || currentCell) {
+                currentRow.push(currentCell);
+                rows.push(currentRow);
+            }
+            return rows;
+        };
+
+        const rows = parseCSV(data);
+        console.log("불러온 데이터 개수:", rows.length);
 
         // 초기화
         tableHead.innerHTML = "";
@@ -235,46 +283,41 @@
         // 1. 헤더 만들기
         rows[0].forEach(header => {
           const th = document.createElement("th");
-          th.textContent = header.replace(/^"|"$/g, '').trim();
+          th.textContent = header.trim();
           tableHead.appendChild(th);
         });
 
-        // 데이터 정제
-        const cleanRows = rows.slice(1).filter(r => r.length > 1 && r[0] !== "");
-
         // 2. 전체 테이블 채우기
+        const cleanRows = rows.slice(1);
         cleanRows.forEach(rowData => {
+          if (rowData.length < 2) return; // 빈 줄 무시
           const tr = document.createElement("tr");
           rowData.forEach(cell => {
             const td = document.createElement("td");
-            td.textContent = cell.replace(/^"|"$/g, '').trim();
+            td.textContent = cell.trim();
             tr.appendChild(td);
           });
           tableBody.appendChild(tr);
         });
 
-        // 3. 최근 전적 카드 생성
+        // 3. 최근 전적 카드 생성 (최신 3개)
         const recentMatches = [...cleanRows].reverse().slice(0, 3);
 
         if (recentMatches.length === 0) {
           recentList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">기록된 전적이 없습니다.</div>';
         } else {
           recentMatches.forEach(row => {
-            // CSV 컬럼 순서 가정: [0:날짜, 1:구분, 2:내용(점수), 3:결과(승패), 4:비고(구장)]
-            const date = row[0]?.replace(/^"|"$/g, '') || "-";
-            const content = row[2]?.replace(/^"|"$/g, '') || "";
-            const result = row[3]?.replace(/^"|"$/g, '') || "-";
-            const place = row[4]?.replace(/^"|"$/g, '') || "Unknown Stadium";
+            // [0:날짜, 1:구분, 2:내용, 3:결과, 4:비고]
+            const date = row[0] || "-";
+            const content = row[2] || "";
+            const result = row[3] || "-";
+            const place = row[4] || "Unknown";
 
-            // 점수 추출 (예: '5:3' 또는 '5대3')
             let scoreText = content; 
             const scoreMatch = content.match(/\d+\s*[:대]\s*\d+/);
             if (scoreMatch) scoreText = scoreMatch[0];
 
-            // 승패 로직 (나형동 기준)
             const isNaWin = result.includes("승");
-            
-            // 승자는 굵고 진하게, 패자는 흐리게
             const naClass = isNaWin ? "team-lg winner" : "team-lg loser";
             const shinClass = !isNaWin ? "team-samsung winner" : "team-samsung loser";
 
@@ -301,7 +344,7 @@
 
       } catch (error) {
         console.error("로딩 실패:", error);
-        loading.innerHTML = `<div style="color:#ff5e62">${error.message}</div>`;
+        loading.innerHTML = `<div style="color:#ff5e62">⚠️ ${error.message}</div>`;
       }
     }
 
