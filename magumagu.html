@@ -217,15 +217,18 @@
     // ▼ 링크는 그대로 유지
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1iiehoCN1p4v2gu1nChpfb5VznGhjwdgEFUVs1ohHp5Q/export?format=csv";
 
-    // ▼▼▼ [중요] 엑셀 열 번호 설정 (스크린샷 기준) ▼▼▼
-    // A열=0, B열=1 ... H열=7, I열=8, J열=9, K열=10
-    const COL_MONTH = 1;     // 월 (B열)
-    const COL_DAY = 2;       // 일 (C열)
-    const COL_RESULT = 7;    // 승패 결과 (H열) ★여기가 비어있으면 안 뜬걸로 처리
-    const COL_SCORE_NA = 8;  // 나형동 점수 (I열)
-    const COL_SCORE_SHIN = 9;// 신선민 점수 (J열)
-    const COL_PLACE = 10;    // 비고/구장 (K열)
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+    // ▼▼▼ [중요] 엑셀 열 번호 설정 (스크린샷 Row 3, 4 기준) ▼▼▼
+    // 엑셀 A열=0, B열=1 ... H열=7, I열=8, J열=9, K열=10
+    const HEADER_ROW_INDEX = 2;   // 엑셀 3행 (Round, 월, 일, ... 결과, 나형동, 신선민, 비고)이 헤더임
+    const DATA_START_ROW = 3;     // 엑셀 4행부터가 실제 데이터임
+
+    const COL_MONTH = 1;          // 월 (B열)
+    const COL_DAY = 2;            // 일 (C열)
+    const COL_RESULT = 7;         // 승패 결과 (H열)
+    const COL_SCORE_NA = 8;       // 나형동 점수 (I열)
+    const COL_SCORE_SHIN = 9;     // 신선민 점수 (J열)
+    const COL_PLACE = 10;         // 비고/구장 (K열)
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     async function loadSpreadsheet() {
       const tableHead = document.getElementById("tableHead");
@@ -234,11 +237,10 @@
       const recentList = document.getElementById("recentMatchList");
 
       try {
-        // 캐시 방지용 시간 추가
         const response = await fetch(SHEET_CSV_URL + "&t=" + Date.now());
         const data = await response.text();
 
-        if (data.trim().startsWith("<!")) throw new Error("공유 설정 오류: '링크가 있는 모든 사용자' 권한 확인 필요");
+        if (data.trim().startsWith("<!")) throw new Error("공유 설정 오류: '웹에 게시' 혹은 '링크가 있는 모든 사용자' 권한 확인 필요");
 
         // CSV 파싱 함수 (쉼표 문제 해결)
         const parseCSV = (text) => {
@@ -260,26 +262,28 @@
         };
 
         const rows = parseCSV(data);
+        if (rows.length === 0) {
+           loading.innerHTML = '<div style="color:var(--muted)">데이터가 비어 있습니다.</div>';
+           return;
+        }
 
         // 초기화
         tableHead.innerHTML = "";
         tableBody.innerHTML = "";
         recentList.innerHTML = "";
-
-        if (rows.length === 0) return;
-
-        // 1. 헤더 생성
-        rows[0].forEach(header => {
+        
+        // 1. 헤더 생성 (HEADER_ROW_INDEX 사용)
+        rows[HEADER_ROW_INDEX].forEach(header => {
             const th = document.createElement("th");
             th.textContent = header.trim();
             tableHead.appendChild(th);
         });
+        
+        // 2. 전체 데이터 가공 (DATA_START_ROW 사용)
+        const allDataRows = rows.slice(DATA_START_ROW).filter(r => r.length > COL_PLACE); // 비고 칸까지 데이터가 있는 행만 필터링
 
-        // 2. 데이터 가공 (빈 줄 제거)
-        const cleanRows = rows.slice(1).filter(r => r.length > 1);
-
-        // 전체 테이블 채우기 (여기는 미래 일정도 다 보여줍니다)
-        cleanRows.forEach(rowData => {
+        // 전체 테이블 채우기
+        allDataRows.forEach(rowData => {
             const tr = document.createElement("tr");
             rowData.forEach(cell => {
                 const td = document.createElement("td");
@@ -289,12 +293,12 @@
             tableBody.appendChild(tr);
         });
 
-        // 3. ★ [핵심] 최근 전적 카드 (필터링 적용) ★
+        // 3. 최근 전적 카드 생성 (필터링 적용)
         
-        // "승패 결과(H열)"에 값이 있는 경기만 골라냅니다! (빈 값이나 공백 제외)
-        const playedMatches = cleanRows.filter(row => {
+        // 결과(H열)에 값이 있는 경기만 골라냄 (미래 일정 무시)
+        const playedMatches = allDataRows.filter(row => {
             const result = row[COL_RESULT]; 
-            return result && result.trim().length > 0; 
+            return result && result.trim().length > 0 && result.trim() !== "-"; 
         });
 
         // 진행된 경기 중에서 최신 3개만 뽑기
@@ -304,6 +308,7 @@
             recentList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">아직 진행된 경기가 없습니다.</div>';
         } else {
             recentMatches.forEach(row => {
+                // 데이터 가져오기
                 const month = row[COL_MONTH] || "?";
                 const day = row[COL_DAY] || "?";
                 const dateText = `${month}월 ${day}일`;
@@ -315,7 +320,7 @@
 
                 const scoreText = `${scoreNa} : ${scoreShin}`;
 
-                // 승패 로직: 결과에 '승'자가 있거나 나형동 점수가 더 높으면 승리
+                // 승패 로직
                 const isWin = result.includes("승") || (parseInt(scoreNa) > parseInt(scoreShin));
                 
                 const naClass = isWin ? "team-lg winner" : "team-lg loser";
