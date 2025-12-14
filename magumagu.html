@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>마구마구 데이터 센터 - (주)공부하자</title>
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* 마구마구 페이지 전용 추가 스타일 */
+    .magu-hero {
+      background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15), transparent 70%);
+      text-align: center;
+      padding: 60px 0;
+    }
+    .magu-badge {
+      background: linear-gradient(135deg, #ff9966, #ff5e62);
+      color: #fff; padding: 5px 12px; border-radius: 20px;
+      font-weight: 800; font-size: 12px; text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(255, 94, 98, 0.4);
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--muted); margin-bottom: 20px; font-size: 14px;
+    }
+    .back-btn:hover { color: #fff; text-decoration: underline; }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="container header-inner">
+      <a class="logo" href="index.html">(주)공부하자</a>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="index.html#team">구성원</a></li>
+          <li><a href="index.html#projects">다른 프로젝트</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container" style="padding-top: 40px;">
+      <a href="index.html" class="back-btn">← 메인으로 돌아가기</a>
+      
+      <section class="magu-hero">
+        <span class="magu-badge">Project No.05</span>
+        <h1 style="font-size: clamp(32px, 4vw, 48px); margin: 15px 0;">⚾️ MaguMagu Data Center</h1>
+        <p style="color: var(--muted); max-width: 600px; margin: 0 auto;">
+          나형동 수석연구관이 밤새워 기록한 승패 전적과 카드깡 확률 분석실입니다.<br>
+          이 데이터는 <strong>과학적 덱 구성</strong>과 <strong>자기 위로</strong>를 위해 사용됩니다.
+        </p>
+      </section>
+
+      <section id="overview">
+        <div class="about-grid">
+          <div class="card">
+            <h3 style="color: var(--brand);">연구 목표 (Goals)</h3>
+            <ul style="color: var(--muted); padding-left: 20px; line-height: 1.8;">
+              <li>시즌별 선수 스탯 변동 추이와 시장가 분석</li>
+              <li>전설(Legend) 등급 카드 획득 확률의 수치화</li>
+              <li><strong>궁극의 덱 완성을 통한 '압도적 감사' 실현</strong></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="color: #ff5e62;">참여 연구원</h3>
+            <div class="participants" style="margin-top:10px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <img src="images/team/nahyungdong.jpg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'">
+                    <div>
+                        <div style="font-weight:700; font-size:14px;">나형동 (Lead)</div>
+                        <div style="font-size:12px; color:var(--muted);">데이터 입력 및 카드 구매</div>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="images/team/shinseonmin.jpg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'">
+                    <div>
+                        <div style="font-weight:700; font-size:14px;">신선민</div>
+                        <div style="font-size:12px; color:var(--muted);">실전 테스트 및 훈수</div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="records">
+        <div class="section-head" style="margin-bottom: 30px;">
+          <h2>📊 Live Record</h2>
+          <p>구글 스프레드시트와 실시간으로 연동되는 전적표입니다.</p>
+        </div>
+
+        <div class="table-container">
+          <table id="maguTable">
+            <thead>
+              <tr id="tableHead"></tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div id="loading" style="text-align:center; padding:40px; color:var(--muted);">
+            데이터 불러오는 중... ⚾️
+          </div>
+        </div>
+        
+        <div style="margin-top: 20px; text-align: right; font-size: 12px; color: var(--faint);">
+            * 데이터 갱신 주기: 약 5분 (Google Cache)
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container" style="text-align:center; padding: 40px 0; color:var(--faint); font-size:12px;">
+      © 2025 (주)공부하자 MaguMagu Lab.
+    </div>
+  </footer>
+
+  <script>
+    // ★★★ 여기에 아까 복사한 [CSV 링크]를 넣으세요! ★★★
+    const SHEET_CSV_URL = "여기에_구글시트_CSV_링크_넣기";
+
+    async function loadSpreadsheet() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const data = await response.text();
+        const rows = data.split("\n").map(row => row.split(","));
+
+        const tableHead = document.getElementById("tableHead");
+        const tableBody = document.getElementById("tableBody");
+        const loading = document.getElementById("loading");
+
+        tableHead.innerHTML = "";
+        tableBody.innerHTML = "";
+
+        if (rows.length === 0) return;
+
+        // 헤더 처리
+        rows[0].forEach(header => {
+            const th = document.createElement("th");
+            th.textContent = header.replace(/"/g, "");
+            tableHead.appendChild(th);
+        });
+
+        // 데이터 처리
+        for (let i = 1; i < rows.length; i++) {
+            const rowData = rows[i];
+            if (rowData.length < rows[0].length) continue; 
+
+            const tr = document.createElement("tr");
+            rowData.forEach(cell => {
+                const td = document.createElement("td");
+                td.textContent = cell.replace(/"/g, "");
+                tr.appendChild(td);
+            });
+            tableBody.appendChild(tr);
+        }
+        loading.style.display = 'none';
+
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById("loading").textContent = "데이터를 불러올 수 없습니다. (링크 확인 필요)";
+      }
+    }
+    loadSpreadsheet();
+  </script>
+</body>
+</html>
