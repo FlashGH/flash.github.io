@@ -10,15 +10,15 @@
   <style>
     /* 마구마구 페이지 전용 스타일 */
     .magu-hero {
-      background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15), transparent 70%);
+      background: radial-gradient(circle at center, rgba(195, 0, 47, 0.15), transparent 70%); /* LG Red 느낌 살짝 */
       text-align: center;
       padding: 60px 0;
     }
     .magu-badge {
-      background: linear-gradient(135deg, #ff9966, #ff5e62);
+      background: linear-gradient(135deg, #C3002F, #074CA1); /* LG Red to Samsung Blue */
       color: #fff; padding: 5px 12px; border-radius: 20px;
       font-weight: 800; font-size: 12px; text-transform: uppercase;
-      box-shadow: 0 4px 15px rgba(255, 94, 98, 0.4);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
     .back-btn {
       display: inline-flex; align-items: center; gap: 8px;
@@ -26,7 +26,55 @@
     }
     .back-btn:hover { color: #fff; text-decoration: underline; }
 
-    /* 테이블 스타일 보강 */
+    /* 레이아웃 그리드 수정 */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* 기본 2열 */
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    /* 두 칸을 차지하는 풀 사이즈 카드 */
+    .full-width-card {
+      grid-column: 1 / -1; /* 처음부터 끝까지 차지 */
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    /* VS 매치 카드 스타일 */
+    .vs-match-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 15px 25px;
+      margin-bottom: 12px;
+      transition: transform 0.2s;
+    }
+    .vs-match-row:hover { transform: translateY(-2px); background: rgba(255,255,255,0.05); }
+
+    .team-box { text-align: center; width: 30%; }
+    .team-name { font-size: 16px; margin-bottom: 4px; }
+    .team-lg { color: #ff4d4d; } /* LG Red (다크모드용 밝은 버전) */
+    .team-samsung { color: #4dabf7; } /* Samsung Blue (다크모드용 밝은 버전) */
+    
+    .score-box { text-align: center; width: 40%; }
+    .score-text { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: 2px; }
+    .match-place { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .match-date-badge { 
+        font-size: 10px; padding: 2px 6px; border-radius: 4px; 
+        background: rgba(255,255,255,0.1); color: #aaa; display:inline-block; margin-bottom:5px;
+    }
+
+    /* 승리자 강조 스타일 */
+    .winner { font-weight: 900; opacity: 1; transform: scale(1.05); display:inline-block;}
+    .loser { font-weight: 400; opacity: 0.5; }
+
+    /* 테이블 스타일 */
     .table-container {
       overflow-x: auto;
       background: var(--surface);
@@ -44,6 +92,12 @@
       padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text);
     }
     tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+    @media (max-width: 768px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .vs-match-row { flex-direction: column; gap: 10px; padding: 20px; }
+      .team-box, .score-box { width: 100%; }
+    }
   </style>
 </head>
 
@@ -69,66 +123,76 @@
         <span class="magu-badge">Project No.05</span>
         <h1 style="font-size: clamp(32px, 4vw, 48px); margin: 15px 0;">⚾️ MaguMagu Data Center</h1>
         <p style="color: var(--muted); max-width: 600px; margin: 0 auto;">
-          나형동 수석연구관이 기록한 전적 및 카드깡 확률 분석실입니다.<br>
-          이 데이터는 <strong>과학적 덱 구성</strong>과 <strong>자기 위로</strong>를 위해 사용됩니다.
+          LG(나형동) vs 삼성(신선민)<br>
+          자존심을 건 세기의 대결, 그 치열한 기록의 현장.
         </p>
       </section>
 
       <section id="overview">
         <div class="about-grid">
+          
           <div class="card">
             <h3 style="color: var(--brand);">연구 목표 (Goals)</h3>
             <ul style="color: var(--muted); padding-left: 20px; line-height: 1.8;">
-              <li>시즌별 선수 스탯 변동 추이와 시장가 분석</li>
-              <li>전설(Legend) 등급 카드 획득 확률의 수치화</li>
-              <li><strong>궁극의 덱 완성을 통한 '압도적 감사' 실현</strong></li>
+              <li>전설(Legend) 카드 획득 확률 분석</li>
+              <li>상대 전적 우위를 통한 서열 정리</li>
+              <li><strong>'압도적 감사' 세레머니 연구</strong></li>
             </ul>
           </div>
+
           <div class="card">
             <h3 style="color: #ff5e62;">참여 연구원</h3>
             <div class="participants" style="margin-top:10px;">
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                     <img src="images/team/nahyungdong.jpg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'">
                     <div>
-                        <div style="font-weight:700; font-size:14px;">나형동 (Lead)</div>
-                        <div style="font-size:12px; color:var(--muted);">데이터 입력 및 카드 구매</div>
+                        <div style="font-weight:700; font-size:14px; color:#ff4d4d;">나형동 (LG)</div>
+                        <div style="font-size:12px; color:var(--muted);">구단주 & 수석연구관</div>
                     </div>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
                     <img src="images/team/shinseonmin.jpg" style="width:40px; height:40px; border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'">
                     <div>
-                        <div style="font-weight:700; font-size:14px;">신선민</div>
-                        <div style="font-size:12px; color:var(--muted);">실전 테스트 및 훈수</div>
+                        <div style="font-weight:700; font-size:14px; color:#4dabf7;">신선민 (Samsung)</div>
+                        <div style="font-size:12px; color:var(--muted);">전략분석관</div>
                     </div>
                 </div>
             </div>
           </div>
+
+          <div class="full-width-card">
+            <div style="display:flex; justify-content:space-between; align-items:end; margin-bottom:15px;">
+              <h3 style="margin:0; font-size:20px; color:#fff;">⚡️ 최근 경기 결과 (Recent Matches)</h3>
+              <span style="font-size:12px; color:var(--muted);">최근 3경기</span>
+            </div>
+            
+            <div id="recentMatchList">
+                <div style="text-align:center; padding:20px; color:var(--muted);">데이터 로딩중...</div>
+            </div>
+          </div>
+
         </div>
       </section>
 
       <section id="records">
         <div class="section-head" style="margin-bottom: 30px;">
-          <h2>📊 Live Record</h2>
-          <p>구글 스프레드시트와 실시간으로 연동되는 전적표입니다.</p>
+          <h2>📊 Full History</h2>
+          <p>구글 스프레드시트에 기록된 전체 전적입니다.</p>
         </div>
 
         <div class="table-container">
           <table id="maguTable">
             <thead>
-              <tr id="tableHead">
-                </tr>
+              <tr id="tableHead"></tr>
             </thead>
-            <tbody id="tableBody">
-              </tbody>
+            <tbody id="tableBody"></tbody>
           </table>
-          
           <div id="loading" style="text-align:center; padding:40px; color:var(--muted);">
             데이터 불러오는 중... ⚾️
           </div>
         </div>
-        
         <div style="margin-top: 20px; text-align: right; font-size: 12px; color: var(--faint);">
-            * 데이터 갱신 주기: 구글 캐시 정책에 따라 3~5분 소요될 수 있음
+            * Data Source: Google Sheets
         </div>
       </section>
     </div>
@@ -141,44 +205,41 @@
   </footer>
 
   <script>
-    // ▼▼▼ 제가 변환한 CSV 다운로드 링크입니다 ▼▼▼
+    // 구글 시트 CSV 링크
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1iiehoCN1p4v2gu1nChpfb5VznGhjwdgEFUVs1ohHp5Q/export?format=csv";
     
     async function loadSpreadsheet() {
       const tableHead = document.getElementById("tableHead");
       const tableBody = document.getElementById("tableBody");
       const loading = document.getElementById("loading");
+      const recentList = document.getElementById("recentMatchList");
 
       try {
         const response = await fetch(SHEET_CSV_URL);
-        
-        // 권한 에러 체크
-        if (!response.ok) {
-           throw new Error("스프레드시트 접근 권한이 없습니다. (공유 설정을 '링크가 있는 모든 사용자'로 바꿔주세요)");
-        }
+        if (!response.ok) throw new Error("권한 오류");
 
         const data = await response.text();
-        
-        // CSV 파싱
         const rows = data.split("\n").map(row => row.split(","));
 
+        // 초기화
         tableHead.innerHTML = "";
         tableBody.innerHTML = "";
+        recentList.innerHTML = "";
 
         if (rows.length === 0) return;
 
-        // 1. 헤더 만들기
+        // 1. 테이블 헤더 생성
         rows[0].forEach(header => {
             const th = document.createElement("th");
             th.textContent = header.replace(/^"|"$/g, '').trim();
             tableHead.appendChild(th);
         });
 
-        // 2. 데이터 만들기
-        for (let i = 1; i < rows.length; i++) {
-            const rowData = rows[i];
-            if (rowData.length < 1 || (rowData.length === 1 && rowData[0] === "")) continue;
+        // 데이터 정제
+        const cleanRows = rows.slice(1).filter(r => r.length > 1 && r[0] !== "");
 
+        // 2. 전체 테이블 데이터 채우기
+        cleanRows.forEach(rowData => {
             const tr = document.createElement("tr");
             rowData.forEach(cell => {
                 const td = document.createElement("td");
@@ -186,19 +247,66 @@
                 tr.appendChild(td);
             });
             tableBody.appendChild(tr);
+        });
+
+        // 3. ★ [핵심] 최근 전적 카드 생성 로직 ★
+        // 최신순으로 3개만 가져옴
+        const recentMatches = [...cleanRows].reverse().slice(0, 3);
+
+        if (recentMatches.length === 0) {
+            recentList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">기록된 전적이 없습니다.</div>';
+        } else {
+            recentMatches.forEach(row => {
+                // CSV 컬럼 순서 가정: [0:날짜, 1:구분, 2:내용(점수), 3:결과(승패), 4:비고(구장)]
+                const date = row[0]?.replace(/^"|"$/g, '') || "-";
+                const content = row[2]?.replace(/^"|"$/g, '') || "";
+                const result = row[3]?.replace(/^"|"$/g, '') || "-";
+                const place = row[4]?.replace(/^"|"$/g, '') || "Unknown Stadium";
+
+                // 점수 추출 (내용에 '5:3' 같은 패턴이 있으면 그걸 점수로 씀)
+                // 만약 점수 패턴이 없으면 그냥 내용 전체를 보여줌
+                let scoreText = content; 
+                // 간단한 점수 패턴 찾기 (숫자:숫자)
+                const scoreMatch = content.match(/\d+\s*:\s*\d+/);
+                if (scoreMatch) {
+                    scoreText = scoreMatch[0];
+                }
+
+                // 승패 로직 (나형동 기준)
+                // 결과에 '승'이 있으면 나형동 승리
+                const isNaWin = result.includes("승");
+                
+                // 스타일 결정
+                // 승리자: 굵게 + 불투명도 100%
+                // 패배자: 얇게 + 불투명도 50%
+                const naClass = isNaWin ? "team-lg winner" : "team-lg loser";
+                const shinClass = !isNaWin ? "team-samsung winner" : "team-samsung loser";
+
+                // HTML 생성
+                const matchHtml = `
+                    <div class="vs-match-row">
+                        <div class="team-box">
+                            <div class="team-name ${naClass}">나형동 (LG)</div>
+                        </div>
+                        <div class="score-box">
+                            <div class="match-date-badge">${date}</div>
+                            <div class="score-text">${scoreText}</div>
+                            <div class="match-place">📍 ${place}</div>
+                        </div>
+                        <div class="team-box">
+                            <div class="team-name ${shinClass}">신선민 (Samsung)</div>
+                        </div>
+                    </div>
+                `;
+                recentList.innerHTML += matchHtml;
+            });
         }
         
         loading.style.display = 'none';
 
       } catch (error) {
-        console.error("데이터 로드 실패:", error);
-        loading.innerHTML = `
-          <div style="color:#ff5e62">
-            데이터를 불러올 수 없습니다.<br>
-            <span style="font-size:12px; color:gray">
-              (${error.message})
-            </span>
-          </div>`;
+        console.error("로딩 실패:", error);
+        loading.textContent = "데이터 로드 실패";
       }
     }
 
