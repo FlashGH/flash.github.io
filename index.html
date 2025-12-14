@@ -3,712 +3,343 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="(주)공부하자 — 아무것도 안 한다. 하지만 무엇이든 한다." />
-  <title>(주)공부하자 - 공부 안하면 이렇게 된다.</title>
+  <meta name="description" content="(주)공부하자 — 인재 중심 경영, 하지만 게임 중심 생활." />
+  <title>(주)공부하자 - 조직도 및 임직원 현황</title>
 
   <style>
     :root{
       --bg: #0f1115;
       --surface: #151922;
-      --surface-2: #111521;
-      --border: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.1);
       --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.65);
-      --faint: rgba(255,255,255,.45);
+      --muted: rgba(255,255,255,.6);
+      --faint: rgba(255,255,255,.3);
 
-      --brand: #4facfe;
-      --brand-2: #00f2fe;
-      --accent: #ff0080; /* 게임 프로젝트용 강조 컬러 */
+      --brand: #3b82f6;
+      --accent: #8b5cf6;
+      
+      /* 직급별 컬러 */
+      --rank-ceo: #eab308;   /* 사장 - 골드 */
+      --rank-head: #a855f7;  /* 부장 - 퍼플 */
+      --rank-chief: #3b82f6; /* 과장 - 블루 */
+      --rank-intern: #78716c;/* 인턴 - 그레이 */
 
       --radius: 16px;
-      --radius-sm: 12px;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-
       --container: 1120px;
-      --header-h: 72px;
-      --gap: 24px;
+      --header-h: 70px;
     }
 
     *{ box-sizing:border-box; }
     html{ scroll-behavior:smooth; }
-    @media (prefers-reduced-motion: reduce){
-      html{ scroll-behavior:auto; }
-      *{ animation:none !important; transition:none !important; }
-    }
-
+    
     body{
       margin:0;
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-      background: radial-gradient(1200px 700px at 15% 0%, rgba(79,172,254,.18), transparent 55%),
-                  radial-gradient(900px 600px at 90% 10%, rgba(0,242,254,.12), transparent 55%),
-                  var(--bg);
+      font-family: 'Pretendard', -apple-system, sans-serif;
+      background: #0f1115;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
       color: var(--text);
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
-    a{ color:inherit; text-decoration:none; }
+    a{ color:inherit; text-decoration:none; transition: .2s; }
     ul{ list-style:none; padding:0; margin:0; }
-
-    .container{ max-width: var(--container); margin:0 auto; padding: 0 20px; }
-
-    /* 접근성 */
-    .skip-link{
-      position:absolute; left:-9999px; top:auto;
-      width:1px; height:1px; overflow:hidden;
-    }
-    .skip-link:focus{
-      left:20px; top:20px; width:auto; height:auto;
-      padding:10px 12px; background:#000; border:1px solid var(--border);
-      border-radius: 10px; z-index:9999;
-    }
-    :focus-visible{
-      outline: 2px solid rgba(79,172,254,.9);
-      outline-offset: 3px;
-      border-radius: 10px;
-    }
+    .container{ max-width: var(--container); margin:0 auto; padding: 0 24px; }
 
     /* 헤더 */
     header{
-      position: fixed;
-      top: 0; left: 0; right: 0;
+      position: sticky; top: 0; z-index: 100;
       height: var(--header-h);
-      display:flex; align-items:center;
-      background: rgba(15,17,21,.70);
-      backdrop-filter: blur(10px);
+      background: rgba(15,17,21,0.85);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      z-index: 1000;
+      display: flex; align-items: center;
     }
-    .header-inner{
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-    }
-    .logo{
-      font-weight: 900;
-      letter-spacing: .2px;
-      font-size: 18px;
-      display:flex; align-items:center; gap:10px;
-      white-space: nowrap;
-    }
-    .logo-badge{
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      box-shadow: 0 0 0 6px rgba(79,172,254,.12);
-    }
+    .header-inner{ width: 100%; display:flex; justify-content: space-between; align-items: center; }
+    .logo{ font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
+    .nav-list{ display:flex; gap: 20px; font-size: 14px; color: var(--muted); }
+    .nav-list a:hover{ color: #fff; }
 
-    nav{ display:flex; align-items:center; gap: 10px; }
-    .nav-list{ display:flex; gap: 18px; }
-    .nav-link{
-      font-size: 14px;
-      color: var(--muted);
-      padding: 10px 10px;
-      border-radius: 12px;
-      transition: transform .18s ease, background .18s ease, color .18s ease;
-    }
-    .nav-link:hover{
-      color: var(--text);
-      background: rgba(255,255,255,.06);
-      transform: translateY(-1px);
-    }
+    /* 섹션 공통 */
+    section{ padding: 80px 0; border-bottom: 1px solid var(--border); }
+    .section-head{ margin-bottom: 40px; text-align: center; }
+    .section-head h2{ font-size: 28px; margin: 0 0 10px; }
+    .section-head p{ color: var(--muted); margin: 0; }
 
-    /* 모바일 메뉴 */
-    .menu-btn{
-      display:none;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
+    /* 팀원 카드 스타일 (ID Card 컨셉) */
+    .team-grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
     }
-    .menu-panel{
-      display:none;
-      position:absolute;
-      top: calc(var(--header-h) + 10px);
-      right: 20px;
-      left: 20px;
-      background: rgba(21,25,34,.96);
+    
+    .id-card{
+      background: #1a1e29;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 10px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .menu-panel a{
-      display:block;
-      padding: 12px 12px;
+    .id-card:hover{
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    /* 상단 배지 */
+    .card-header{
+      height: 80px;
+      background: linear-gradient(135deg, #2d3748, #1a202c);
+      position: relative;
+    }
+    .rank-badge{
+      position: absolute;
+      top: 12px; right: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #000;
+      text-transform: uppercase;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    /* 직급별 색상 적용 */
+    .rank-ceo { background: var(--rank-ceo); }
+    .rank-head { background: var(--rank-head); color: #fff; }
+    .rank-chief { background: var(--rank-chief); color: #fff; }
+    .rank-intern { background: var(--rank-intern); color: #fff; }
+
+    .avatar-wrapper{
+      margin-top: -50px;
+      margin-left: 20px;
+      width: 100px; height: 100px;
       border-radius: 12px;
-      color: var(--muted);
-    }
-    .menu-panel a:hover{ background: rgba(255,255,255,.06); color: var(--text); }
-
-    /* 히어로 */
-    main{ padding-top: var(--header-h); }
-    .hero{
-      min-height: calc(100vh - var(--header-h));
-      display:flex;
-      align-items:center;
-      padding: 48px 0 24px;
-    }
-    .hero-grid{
-      display:grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: clamp(18px, 4vw, 40px);
-      align-items:center;
-    }
-    .headline{
-      font-size: clamp(34px, 4.2vw, 58px);
-      line-height: 1.08;
-      margin: 0 0 14px;
-      letter-spacing: -0.6px;
-    }
-    .subhead{
-      margin: 0 0 22px;
-      color: var(--muted);
-      font-size: clamp(15px, 1.4vw, 18px);
-    }
-    .hero-actions{
-      display:flex; gap: 12px; flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap: 10px;
-      padding: 12px 16px;
-      border-radius: 14px;
-      font-weight: 800;
-      border: 1px solid transparent;
-      transition: transform .18s ease, background .18s ease, border .18s ease;
-    }
-    .btn-primary{
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      color: #061019;
-      box-shadow: 0 12px 30px rgba(79,172,254,.25);
-    }
-    .btn-primary:hover{ transform: translateY(-2px); }
-    .btn-ghost{
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      border-color: var(--border);
-    }
-    .btn-ghost:hover{ transform: translateY(-2px); border-color: rgba(79,172,254,.35); }
-
-    .hero-card{
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      background: #000;
+      padding: 3px;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: var(--shadow);
+      position: relative;
     }
-    .hero-card h3{
-      margin: 0 0 10px;
-      font-size: 16px;
-      color: rgba(255,255,255,.86);
-      letter-spacing: .2px;
+    .avatar{
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 9px;
+      background: #333; /* 이미지 없을 때 배경 */
     }
-    .pill-row{
-      display:flex; flex-wrap:wrap; gap: 10px;
-    }
-    .pill{
+
+    .card-body{ padding: 15px 20px 20px; }
+    
+    .name-group{ margin-bottom: 15px; }
+    .name{ font-size: 20px; font-weight: 700; color: #fff; margin: 0; }
+    .job-title{ font-size: 13px; color: var(--brand); font-weight: 600; margin-top: 2px; }
+
+    .info-list{
       font-size: 13px;
       color: var(--muted);
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      padding: 8px 10px;
-      border-radius: 999px;
+      border-top: 1px dashed var(--border);
+      padding-top: 15px;
+      display: flex; flex-direction: column; gap: 8px;
     }
-
-    /* 섹션 */
-    section{
-      padding: 56px 0;
-      border-top: 1px solid rgba(255,255,255,.06);
-      scroll-margin-top: calc(var(--header-h) + 16px);
-    }
-    .section-head{
-      text-align:center;
-      margin-bottom: 26px;
-    }
-    .section-head h2{
-      margin: 0 0 10px;
-      font-size: clamp(22px, 2.2vw, 32px);
-      letter-spacing: -0.3px;
-    }
-    .section-head p{
-      margin: 0 auto;
-      max-width: 70ch;
-      color: var(--muted);
-      font-size: 15px;
-    }
-    .underline{
-      display:inline-block;
-      padding-bottom: 6px;
-      border-bottom: 4px solid rgba(79,172,254,.75);
-    }
-
-    /* ABOUT */
-    .about-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--gap);
-      align-items: start;
-    }
-    .card{
-      background: rgba(21,25,34,.70);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.25);
-      transition: transform .18s ease;
-    }
-    .card:hover { transform: translateY(-3px); }
-
-    .card h3{ margin:0 0 10px; font-size: 18px; }
-    .card p{ margin: 0 0 10px; color: var(--muted); }
-    .stats{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 14px;
-    }
-    .stat{
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.03);
-    }
-    .stat .num{
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: -0.6px;
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 4px;
-    }
-    .stat .label{ color: var(--muted); font-size: 13px; }
-
-    /* TEAM */
-    .grid{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-      justify-items: center;
-      align-items: stretch;
-    }
-
-    .member{
-      width: 100%;
-      max-width: 270px;
-      padding: 14px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      overflow: hidden;
-      transition: transform .18s ease, border .18s ease;
-      min-height: 0;
-      text-align: left;
-    }
-    .member:hover{ transform: translateY(-4px); border-color: rgba(79,172,254,.35); }
-
-    .member .avatar{
-      width: 100%;
-      height: 170px;
-      object-fit: cover;
-      border-radius: 14px;
-      display: block;
-      margin: 0 0 12px;
-      border: 1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.04);
-    }
-
-    .member .name{ font-weight: 900; font-size: 16px; margin: 0 0 6px; }
-    .member .role{ color: var(--faint); font-size: 12.5px; margin: 0 0 10px; }
-    .member .desc{ color: var(--muted); font-size: 13.5px; margin: 0; }
-
-    /* BUSINESS & PROJECTS */
-    .biz{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 반응형 그리드 */
-      gap: var(--gap);
-    }
-    .biz-item h3{
-      margin: 0 0 8px;
-      font-size: 17px;
-      color: rgba(0,242,254,.92);
-      letter-spacing: .1px;
-    }
-    .biz-item p{ margin: 0; color: var(--muted); }
+    .info-item{ display: flex; align-items: center; gap: 8px; }
+    .info-icon{ opacity: 0.5; width: 14px; text-align: center; }
     
-    .project-item h3 {
-      color: #ff7eb3; /* 프로젝트(게임) 제목 색상 차별화 */
-      background: linear-gradient(135deg, #ff7eb3, #ff758c);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .participants {
-      margin-top: 15px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .user-tag {
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      background: rgba(255,255,255,0.08);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
+    .univ { color: #e2e8f0; font-weight: 500; }
+    .contact-link:hover { color: var(--brand); text-decoration: underline; }
 
-    /* CONTACT */
-    .map{
-      display:grid;
-      place-items:center;
-      min-height: 360px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background:
-        radial-gradient(500px 250px at 30% 40%, rgba(79,172,254,.14), transparent 60%),
-        rgba(255,255,255,.03);
-      text-align:center;
-      padding: 24px;
-    }
-    .map .emoji{ font-size: 44px; margin-bottom: 10px; }
-    .contact{
-      margin-top: 16px;
-      text-align:center;
-      color: var(--muted);
-      font-size: 14px;
-    }
-    footer{
-      border-top: 1px solid rgba(255,255,255,.06);
-      padding: 22px 0 36px;
-      color: rgba(255,255,255,.45);
-      text-align:center;
-      font-size: 12px;
-    }
+    /* Footer */
+    footer{ padding: 40px 0; text-align: center; color: var(--faint); font-size: 12px; }
 
-    /* 반응형 */
-    @media (max-width: 980px){
-      .hero-grid{ grid-template-columns: 1fr; }
-      .about-grid{ grid-template-columns: 1fr; }
-    }
-    @media (max-width: 640px){
-      .nav-list{ display:none; }
-      .menu-btn{ display:inline-flex; }
-      .member{ max-width: 100%; }
-      .member .avatar{ height: 190px; }
-      .biz { grid-template-columns: 1fr; }
+    @media(max-width: 600px){
+      .nav-list{ display: none; } /* 모바일 간소화 */
     }
   </style>
 </head>
 
 <body>
-  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
 
   <header>
     <div class="container header-inner">
-      <a class="logo" href="#top" aria-label="홈으로">
-        <span class="logo-badge" aria-hidden="true"></span>
-        (주)공부하자
-      </a>
-
-      <nav aria-label="주요 메뉴">
+      <a href="#" class="logo">(주)공부하자</a>
+      <nav>
         <ul class="nav-list">
-          <li><a class="nav-link" href="#about">기업 소개</a></li>
-          <li><a class="nav-link" href="#team">구성원</a></li>
-          <li><a class="nav-link" href="#business">비즈니스</a></li>
-          <li><a class="nav-link" href="#projects">주요 프로젝트</a></li>
-          <li><a class="nav-link" href="#contact">위치</a></li>
+          <li><a href="#team">조직도</a></li>
+          <li><a href="#projects">R&D 프로젝트</a></li>
         </ul>
-
-        <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel">
-          메뉴
-        </button>
       </nav>
-
-      <div class="menu-panel" id="menuPanel" role="dialog" aria-label="모바일 메뉴">
-        <a href="#about">기업 소개</a>
-        <a href="#team">구성원</a>
-        <a href="#business">비즈니스 (현금채굴)</a>
-        <a href="#projects">주요 프로젝트 (게임)</a>
-        <a href="#contact">위치</a>
-      </div>
     </div>
   </header>
 
-  <main id="main">
-    <section class="hero" id="top">
-      <div class="container hero-grid">
-        <div>
-          <h1 class="headline">아무것도 안 한다.<br>하지만 무엇이든 한다.</h1>
-          <p class="subhead">Zero to Hero? No, We are Zero to Infinity.</p>
+  <section id="hero" style="text-align: center; padding: 100px 0;">
+    <div class="container">
+      <h1 style="font-size: 42px; margin-bottom: 10px; background: linear-gradient(to right, #4facfe, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        We Don't Study.<br>We Just Play.
+      </h1>
+      <p style="color: var(--muted); font-size: 18px;">
+        학점은 C지만, 인생은 A+를 꿈꾸는 청년들
+      </p>
+    </div>
+  </section>
 
-          <div class="hero-actions">
-            <a href="#projects" class="btn btn-primary">진행중인 프로젝트 →</a>
-            <a href="#about" class="btn btn-ghost">회사 소개 보기</a>
-          </div>
-
-          <div style="margin-top:16px; color: var(--faint); font-size: 13px;">
-            * Let's Study
-          </div>
-        </div>
-
-        <aside class="hero-card" aria-label="요약 카드">
-          <h3>현재 상태</h3>
-          <div class="pill-row">
-            <span class="pill">상주: Discord</span>
-            <span class="pill">전략: Swarm Tactics</span>
-            <span class="pill">현금흐름: 즉시</span>
-            <span class="pill">열정: 무한대</span>
-          </div>
-          <div style="margin-top:14px; color: var(--muted); font-size: 14px;">
-            “기회가 오면 한다.”<br>“기회가 안 오면… 게임 한다.”
-          </div>
-        </aside>
+  <section id="team">
+    <div class="container">
+      <div class="section-head">
+        <h2>임직원 현황 (Organization)</h2>
+        <p>각 분야 최고의 전문가들이(라고 주장하는 사람들이) 모였습니다.</p>
       </div>
-    </section>
 
-    <section id="about">
-      <div class="container">
-        <div class="section-head">
-          <h2><span class="underline">ABOUT US</span></h2>
-          <p>대한민국의 모든 산업에 꼭 필요한 초일류 거대기업 (주)공부하자</p>
-        </div>
+      <div class="team-grid">
 
-        <div class="about-grid">
-          <div class="card">
-            <h3>잠재력이 폭발하는 초연결 하이브리드 기업</h3>
-            <p>
-              (주)공부하자는 4명의 정예 멤버가 디스코드(Discord)라는 메타버스 공간에 상주하며
-              기회가 올 때까지 에너지를 비축하는 혁신적인 기업입니다.
-            </p>
-            <p>
-              평소에는 E-sports 기반의 R&D(롤/옵치)를 수행하며 팀워크를 다지며,
-              현금성 프로젝트 발생 시 ‘개떼 전략(Swarm Tactics)’으로 순식간에 업무를 처리합니다.
-            </p>
-
-            <div class="stats" aria-label="핵심 지표">
-              <div class="stat">
-                <div class="num">0</div>
-                <div class="label">현재 보유 아이템</div>
+        <article class="id-card">
+          <div class="card-header">
+            <span class="rank-badge rank-ceo">CEO (사장)</span>
+          </div>
+          <div class="avatar-wrapper">
+            <img class="avatar" src="images/jin.jpg" alt="진원석" onerror="this.src='https://via.placeholder.com/100/1a1a1a/ffffff?text=JIN'">
+          </div>
+          <div class="card-body">
+            <div class="name-group">
+              <h3 class="name">진원석</h3>
+              <div class="job-title">FPS 전문연구관</div>
+            </div>
+            <div class="info-list">
+              <div class="info-item">
+                <span class="info-icon">🎓</span>
+                <span class="univ">전남대학교 영어영문학과</span>
               </div>
-              <div class="stat">
-                <div class="num">∞</div>
-                <div class="label">열정(Parents 승인 필요)</div>
+              <div class="info-item">
+                <span class="info-icon">🎂</span>
+                <span>2001. 09. 05</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">📞</span>
+                <a href="tel:010-8916-1326" class="contact-link">010-8916-1326</a>
               </div>
             </div>
           </div>
+        </article>
 
-          <div class="card">
-            <h3>우리가 잘하는 것</h3>
-            <p>① 문제를 “일단” 던지고 ② 빠르게 역할을 나누고 ③ 어쨌든 끝까지 가져갑니다.</p>
-            <p style="color: var(--faint); font-size: 13px; margin-top: 10px;">
-              팁: 여기엔 나중에 “포트폴리오 링크 / 진행 프로젝트 / 성과” 같은 실사용 콘텐츠를 붙이면 완전 실속 있어짐.
-            </p>
-            <div style="margin-top: 14px;">
-              <a class="btn btn-ghost" href="#projects">진행 프로젝트 보러가기</a>
+        <article class="id-card">
+          <div class="card-header">
+            <span class="rank-badge rank-head">부장 (Dept. Head)</span>
+          </div>
+          <div class="avatar-wrapper">
+            <img class="avatar" src="images/na.jpg" alt="나형동" onerror="this.src='https://via.placeholder.com/100/1a1a1a/ffffff?text=NA'">
+          </div>
+          <div class="card-body">
+            <div class="name-group">
+              <h3 class="name">나형동</h3>
+              <div class="job-title">마구마구 수석연구관</div>
+            </div>
+            <div class="info-list">
+              <div class="info-item">
+                <span class="info-icon">🎓</span>
+                <span class="univ">조선대학교 경제학과</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">🎂</span>
+                <span>2001. 03. 13</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">📞</span>
+                <a href="tel:010-7725-9896" class="contact-link">010-7725-9896</a>
+              </div>
             </div>
           </div>
+        </article>
+
+        <article class="id-card">
+          <div class="card-header">
+            <span class="rank-badge rank-chief">과장 (Manager)</span>
+          </div>
+          <div class="avatar-wrapper">
+            <img class="avatar" src="images/moon.jpg" alt="문혁" onerror="this.src='https://via.placeholder.com/100/1a1a1a/ffffff?text=MOON'">
+          </div>
+          <div class="card-body">
+            <div class="name-group">
+              <h3 class="name">문혁</h3>
+              <div class="job-title">상임고문 & 전략기획</div>
+            </div>
+            <div class="info-list">
+              <div class="info-item">
+                <span class="info-icon">🎓</span>
+                <span class="univ" style="font-size: 12px; line-height: 1.3;">전남대 지리학 & 산업공학</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">🎂</span>
+                <span>2001. 09. 20</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">📞</span>
+                <a href="tel:010-5420-3415" class="contact-link">010-5420-3415</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="id-card">
+          <div class="card-header">
+            <span class="rank-badge rank-intern">인턴 (Intern)</span>
+          </div>
+          <div class="avatar-wrapper">
+            <img class="avatar" src="images/shin.jpg" alt="신선민" onerror="this.src='https://via.placeholder.com/100/1a1a1a/ffffff?text=SHIN'">
+          </div>
+          <div class="card-body">
+            <div class="name-group">
+              <h3 class="name">신선민</h3>
+              <div class="job-title">전략기획관</div>
+            </div>
+            <div class="info-list">
+              <div class="info-item">
+                <span class="info-icon">🎓</span>
+                <span class="univ">조선대학교 경영학과</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">🎂</span>
+                <span>2001. 10. 23</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">📞</span>
+                <a href="tel:010-9105-3946" class="contact-link">010-9105-3946</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="container">
+      <div class="section-head">
+        <h2>핵심 사업 (Key Projects)</h2>
+        <p>수익성은 없지만 열정은 넘치는 프로젝트들입니다.</p>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid var(--border);">
+            <h3 style="color:#ff7eb3; margin-top:0;">🎮 League of Legends</h3>
+            <p style="font-size:14px; color:var(--muted);">협곡의 평화를 지키기 위한 끊임없는 연구와 정치질.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid var(--border);">
+            <h3 style="color:#ff7eb3; margin-top:0;">⚾️ MaguMagu</h3>
+            <p style="font-size:14px; color:var(--muted);">나형동 부장 주도 하에 진행되는 데이터 분석 및 카드깡.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid var(--border);">
+            <h3 style="color:#ff7eb3; margin-top:0;">🔫 FPS Research</h3>
+            <p style="font-size:14px; color:var(--muted);">진원석 사장 직속 특수부대 운용 (옵치/발로란트).</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="team">
-      <div class="container">
-        <div class="section-head">
-          <h2><span class="underline">TEAM MEMBER</span></h2>
-          <p>미래를 이끌어갈 위대한 인재들입니다.</p>
-        </div>
+  <footer>
+    <div class="container">
+      &copy; 2025 (주)공부하자 Corp. All rights reserved.<br>
+      본 사이트는 실제 회사가 아니며, 공부하기 싫어서 만든 사이트입니다.
+    </div>
+  </footer>
 
-        <div class="grid">
-          <article class="member">
-            <img class="avatar" src="images/team/nahyungdong.jpg" alt="나형동" loading="lazy">
-            <h3 class="name">나형동</h3>
-            <p class="role">Co-Founder</p>
-            <p class="desc">“일단 던져봐, 수습은 같이 하자.”<br>행동대장 & 마구마구 수석연구원</p>
-          </article>
-
-          <article class="member">
-            <img class="avatar" src="images/team/jinwonseok.jpg" alt="진원석" loading="lazy">
-            <h3 class="name">진원석</h3>
-            <p class="role">Co-Founder</p>
-            <p class="desc">“그래서 오늘 저녁 뭐 먹음?”<br>복지 담당 & FPS 정밀타격 전문가</p>
-          </article>
-
-          <article class="member">
-            <img class="avatar" src="images/team/moonhyuk.jpg" alt="문혁" loading="lazy">
-            <h3 class="name">문혁</h3>
-            <p class="role">Co-Founder</p>
-            <p class="desc">“이거 논리적으로 말이 안 되는데?”<br>전략기획 & 레트로 게임 고고학자</p>
-          </article>
-
-          <article class="member">
-            <img class="avatar" src="images/team/shinseonmin.jpg" alt="신선민" loading="lazy">
-            <h3 class="name">신선민</h3>
-            <p class="role">Employee</p>
-            <p class="desc">“아 귀찮은데… 얼마 준다고?”<br>실무 총괄 & 협곡의 지휘관</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="business">
-      <div class="container">
-        <div class="section-head">
-          <h2><span class="underline">CASH FLOW</span></h2>
-          <p>(주)공부하자의 실질적 현금 창출을 담당하는 비즈니스 영역입니다.</p>
-        </div>
-
-        <div class="biz">
-          <div class="card biz-item">
-            <h3>⚾️ Security Solution</h3>
-            <p>대규모 스포츠 이벤트의 안전과 질서를 유지하는 현장 보안 솔루션을 제공합니다.</p>
-            <p style="margin-top:10px; color: var(--faint); font-size: 13px;">(a.k.a 알바)</p>
-          </div>
-
-          <div class="card biz-item">
-            <h3>🏗️ Infra Construction</h3>
-            <p>도시 기반 시설 확충을 위한 물리적 노동력을 제공하여 즉각적인 현금 흐름을 창출합니다.</p>
-            <p style="margin-top:10px; color: var(--faint); font-size: 13px;">(a.k.a 노가다)</p>
-          </div>
-
-          <div class="card biz-item">
-            <h3>💰 Angel Funding Series A</h3>
-            <p>가족(Parents) 기반의 엔젤 투자를 유치하여 안정적인 운영 자금을 확보합니다.</p>
-            <p style="margin-top:10px; color: var(--faint); font-size: 13px;">(a.k.a 용돈)</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="projects">
-      <div class="container">
-        <div class="section-head">
-          <h2><span class="underline">KEY PROJECTS</span></h2>
-          <p>임직원들의 핵심 역량 강화를 위해 24시간 가동 중인 R&D 프로젝트입니다.</p>
-        </div>
-
-        <div class="biz">
-          <div class="card biz-item project-item">
-            <h3>⚔️ League of Legends</h3>
-            <p>5vs5 실시간 전술 시뮬레이션 및 멘탈 강화 훈련.</p>
-            <div class="participants">
-              <span class="user-tag">신선민</span>
-              <span class="user-tag">문혁</span>
-              <span class="user-tag">나형동</span>
-              <span class="user-tag">진원석</span>
-            </div>
-          </div>
-
-          <div class="card biz-item project-item">
-            <h3>🔫 Overwatch 2</h3>
-            <p>고해상도 3D 공간 지각 능력 배양 및 정밀 타격 연구.</p>
-            <div class="participants">
-              <span class="user-tag">진원석</span>
-            </div>
-          </div>
-
-          <div class="card biz-item project-item">
-            <h3>💰 GTA V</h3>
-            <p>오픈월드 기반의 범죄 경제학 시뮬레이션 및 운전 연수.</p>
-            <div class="participants">
-              <span class="user-tag">진원석</span>
-              <span class="user-tag">문혁</span>
-              <span class="user-tag">나형동</span>
-            </div>
-          </div>
-
-          <div class="card biz-item project-item">
-            <h3>🔥 Diablo II: Resurrected</h3>
-            <p>고대 유물(Item) 파밍 및 레거시 시스템 최적화 연구.</p>
-            <div class="participants">
-              <span class="user-tag">문혁</span>
-            </div>
-          </div>
-
-          <div class="card biz-item project-item">
-            <h3>⚾️ MaguMagu</h3>
-            <p>개씹야바위.</p>
-            <div class="participants">
-              <span class="user-tag">신선민</span>
-              <span class="user-tag">나형동</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <section id="contact">
-      <div class="container">
-        <div class="section-head">
-          <h2><span class="underline">LOCATION</span></h2>
-          <p>저희가 가는 그 곳, 이 세상 그 어느 곳 모두 저희의 사무실입니다.</p>
-        </div>
-
-        <div class="map">
-          <div>
-            <div class="emoji" aria-hidden="true">🎧</div>
-            <div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">
-              Physical Office Not Found
-            </div>
-            <div style="color: var(--muted);">
-              We Live in <strong>Discord</strong>
-            </div>
-          </div>
-        </div>
-
-        <div class="contact">
-          <p><strong>Headquarters:</strong> 광주광역시 광산구 장동민PC방</p>
-          <p><strong>Email:</strong> <a href="mailto:moonhyuk@jnu.ac.kr">moonhyuk@jnu.ac.kr</a></p>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      © 2025 (주)공부하자. All rights reserved by Parents' Wallet.
-    </footer>
-  </main>
-
-  <script>
-    // 모바일 메뉴 토글 + 메뉴 클릭 시 닫기
-    const btn = document.getElementById('menuBtn');
-    const panel = document.getElementById('menuPanel');
-
-    function closeMenu(){
-      panel.style.display = 'none';
-      btn.setAttribute('aria-expanded', 'false');
-    }
-
-    btn?.addEventListener('click', () => {
-      const opened = btn.getAttribute('aria-expanded') === 'true';
-      if(opened){
-        closeMenu();
-      }else{
-        panel.style.display = 'block';
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    });
-
-    panel?.addEventListener('click', (e) => {
-      if(e.target.tagName === 'A') closeMenu();
-    });
-
-    document.addEventListener('click', (e) => {
-      if(!panel.contains(e.target) && e.target !== btn) closeMenu();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape') closeMenu();
-    });
-  </script>
 </body>
 </html>
